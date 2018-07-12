@@ -1,70 +1,48 @@
-/*==========
-Global Variables
-==========*/
-//#include Cell.js, Board.js;
-var node_size = 8;
+//Setup
+function setup() {	
+  	createCanvas(window.innerWidth, window.innerHeight);
 
-/*==========
-Arbitary Helper Functions
-==========*/
-function generateRandomBool() {return random() >= 0.5 ? true:false}
-function generate() {
-	for (var x = 0; x < board.getMaxX(); ++x) {
-		for (var y = 0; y < board.getMaxY(); ++y) {
-			//Cell Rules Phase
-			var neighbour_count = board.getLivingCellNeighbourCount(x,y);
+	board = new Board([100,100]);
+  	copy_board = new Board(board.getBoardVector());
 
-			if (board.getCellAtPos(x,y).getCellState() && (neighbour_count<2)) copy_board.getCellAtPos(x,y).setCellState(false);
-			else if (board.getCellAtPos(x,y).getCellState() && (neighbour_count>3)) copy_board.getCellAtPos(x,y).setCellState(false);
-			else if (!board.getCellAtPos(x,y).getCellState() && (neighbour_count==3)) copy_board.getCellAtPos(x,y).setCellState(true);
-			else copy_board.getCellAtPos(x,y).setCellState(board.getCellAtPos(x,y).getCellState());
+  	board.intCellArrayDynamic();
+}
+
+function mouseMoved() { //Maps the Frame Rate speed to the relative posistion of the mouse on the x axis.
+	frameRate(map(mouseX,0,window.innerWidth,5,60));
+}
+
+function windowResized() { 
+	resizeCanvas(window.innerWidth,window.innerHeight);
+}
+
+function iterateBoard() { //Iterate over board looking for cells to enable and disable.
+	for (var x = 0; x < board.getBoardVector()[0]; ++x) {
+		for (var y = 0; y < board.getBoardVector()[1]; ++y) {
+			
+			//Checks neighbour living counts and enables or disbales cells based on outputs.
+			var neighbour_count = board.getLivingCellNeighbourCount([x,y]);
+			if (board.getCellAtPos([x,y]).getCellState() && (neighbour_count<2)) copy_board.getCellAtPos([x,y]).setCellState(false);
+			else if (board.getCellAtPos([x,y]).getCellState() && (neighbour_count>3)) copy_board.getCellAtPos([x,y]).setCellState(false);
+			else if (!board.getCellAtPos([x,y]).getCellState() && (neighbour_count==3)) copy_board.getCellAtPos([x,y]).setCellState(true);
+			else copy_board.getCellAtPos([x,y]).setCellState(board.getCellAtPos([x,y]).getCellState());
 		}
 	}
 
 	//Copyback Phase
-	var temp = board;
+	var temp_board = board;
 	board = copy_board;
-	copy_board = temp;
+	copy_board = temp_board;
 }
-
-/*==========
-Setup
-==========*/
-function setup() {
-	
-  	createCanvas(window.innerWidth, window.innerHeight);
-
-	board = new Board(floor(window.innerWidth/node_size),floor(window.innerHeight/node_size));
-  	copy_board = new Board(floor(window.innerWidth/node_size),floor(window.innerHeight/node_size));
-
-  	board.intCellArrayDynamic();
-  	copy_board.intCellArrayBlank();}
 
 /*==========
 Main
 ==========*/
 function draw() {
+	translate(window.innerWidth/2,window.innerHeight/2);
 
-	//Scene Setup Phase
-	clear();
-	translate(width/2,height/2);
-	background(0);
-	noStroke();
-
-	if (mouseIsPressed && (floor(mouseX/node_size)>=0 && floor(mouseX/node_size)<board.getMaxX()) && (floor(mouseY/node_size)>=0 && floor(mouseY/node_size)<board.getMaxY())) {
-		board.getCellAtPos(floor(mouseX/node_size),floor(mouseY/node_size)).setCellState(true);
-	}
-
-	//Drawing Phase
-	for (var x = 0; x < board.getMaxX(); ++x) {
-		for (var y = 0; y < board.getMaxY(); ++y) {
-			if (board.getCellAtPos(x,y).getCellState()) {
-				fill(board.getCellAtPos(x,y).getCellColor())
-				rect(node_size*x-window.innerWidth/2, node_size*y-window.innerHeight/2, node_size, node_size,3);
-			}
-		}
-	}
-
-	//Iterate Cell Generation Phase
-	generate();
+	//Draw Board
+	iterateBoard();
+	board.drawBoard();
+	
 }
