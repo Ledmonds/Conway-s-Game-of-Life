@@ -6,9 +6,10 @@ Modern implementation of the classic Conoways Game of Life Computer Science prob
 
 
 ## Classes:
-board.js 			Contains code relevant to the playing area for the Conoway game, such as board size, etc. 
-cell.js 			Contains code relevant to state information of a single given cell.
-main.js				Just main where code is iterated and run.
+- board.js: Contains code relevant to the playing area for the Conoway game, such as board size, etc. 
+- cell.js: Contains code relevant to state information of a single given cell.
+- main.js: Just main where code is iterated and run.
 
 ## Other Files:
-ReadMe.txt 			ReadMe file.
+- ReadMe.md: ReadMe file.
+- changelog.md: Contains information regarding updates to project.
